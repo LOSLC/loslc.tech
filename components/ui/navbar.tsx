@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { Equal, X } from "lucide-react";
-import { Button } from "@/components/ui/liquid-glass-button";
 import React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import UserAvatar from "@/components/auth/user-avatar";
 
 const menuItems = [
   { name: "Events", href: "/events" },
@@ -93,35 +93,8 @@ export const Header = () => {
                   ))}
                 </ul>
               </div>
-              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-2 sm:space-y-0 md:w-fit">
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="/signin">
-                    <span>Login</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="/signup">
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
-                >
-                  <Link href="#">
-                    <span>Get Started</span>
-                  </Link>
-                </Button>
+              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-2 sm:space-y-0 md:w-fit items-center">
+                <UserAvatar />
               </div>
             </div>
           </div>
