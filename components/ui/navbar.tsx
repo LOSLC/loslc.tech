@@ -10,8 +10,7 @@ const menuItems = [
   { name: "Events", href: "/events" },
   { name: "Blog", href: "/blog" },
   { name: "Forum", href: "/forum" },
-  { name: "Campus", href: "/campus" },
-  { name: "Partnership Program", href: "/partners" },
+  { name: "Programs", href: "/programs" },
 ];
 
 export const Header = () => {
@@ -101,7 +100,7 @@ export const Header = () => {
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
-                  <Link href="#">
+                  <Link href="/signin">
                     <span>Login</span>
                   </Link>
                 </Button>
@@ -110,7 +109,7 @@ export const Header = () => {
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
-                  <Link href="#">
+                  <Link href="/signup">
                     <span>Sign Up</span>
                   </Link>
                 </Button>
