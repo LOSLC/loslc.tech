@@ -30,7 +30,7 @@ export async function getSystemSetting<T = unknown>(
     const setting = await db.query.systemSettings.findFirst({
       where: eq(systemSettings.key, key),
     });
-    return { success: true, data: setting?.value as T };
+    return { success: true, data: setting?.value as T } as ServerResponse<T>;
   } catch (error) {
     return { success: false, message: (error as Error).message };
   }
