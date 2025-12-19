@@ -185,3 +185,6 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+
+export type AuthUser = typeof user.$inferSelect

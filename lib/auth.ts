@@ -91,3 +91,5 @@ export const auth = betterAuth({
     organization(),
   ],
 });
+
+export type User = typeof auth.$Infer.Session.user
