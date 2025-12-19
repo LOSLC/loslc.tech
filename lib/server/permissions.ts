@@ -1,4 +1,3 @@
-import type { AuthUser } from "@/core/db/schemas";
 import type { User } from "@/lib/auth";
 
 export function evaluateRole(

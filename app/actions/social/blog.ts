@@ -19,13 +19,14 @@ import {
 } from "@/core/db/schemas/social/blog";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { ServerResponse } from "@/lib/common/types/request-response";
+import type { ServerResponse } from "@/lib/common/types/request-response";
 import { getCurrentUser } from "../auth";
+import { evaluateRole } from "@/lib/server/permissions";
 
 // --- Blog Posts ---
 
 export async function createBlogPost(
-  data: NewBlogPost & { tags?: string[] }
+  data: NewBlogPost & { tags?: string[] },
 ): Promise<ServerResponse<BlogPost>> {
   try {
     const user = await getCurrentUser();
@@ -70,11 +71,10 @@ export async function createBlogPost(
 }
 
 export async function getBlogPosts(
-  status: "published" | "draft" | "all" = "published"
+  status: "published" | "draft" | "all" = "published",
 ): Promise<ServerResponse<BlogPost[]>> {
   try {
-    const where =
-      status === "all" ? undefined : eq(blogPosts.status, status as any);
+    const where = status === "all" ? undefined : eq(blogPosts.status, status);
     const posts = await db.query.blogPosts.findMany({
       where,
       orderBy: [desc(blogPosts.createdAt)],
@@ -90,7 +90,7 @@ export async function getBlogPosts(
 }
 
 export async function getBlogPostBySlug(
-  slug: string
+  slug: string,
 ): Promise<ServerResponse<BlogPost>> {
   try {
     const post = await db.query.blogPosts.findFirst({
@@ -109,8 +109,8 @@ export async function getBlogPostBySlug(
 
 export async function updateBlogPost(
   id: number,
-  data: Partial<typeof blogPosts.$inferInsert>
-): Promise<ServerResponse<typeof blogPosts.$inferSelect>> {
+  data: Partial<NewBlogPost>,
+): Promise<ServerResponse<BlogPost>> {
   try {
     const user = await getCurrentUser();
     if (!user) return { success: false, message: "Unauthorized" };
@@ -122,7 +122,7 @@ export async function updateBlogPost(
 
     if (
       !existingPost ||
-      (existingPost.authorId !== user.id && user.role !== "admin")
+      (existingPost.authorId !== user.id && !evaluateRole(user, "admin"))
     ) {
       return { success: false, message: "Unauthorized" };
     }
@@ -141,7 +141,7 @@ export async function updateBlogPost(
 }
 
 export async function deleteBlogPost(
-  id: number
+  id: number,
 ): Promise<ServerResponse<void>> {
   try {
     const user = await getCurrentUser();
@@ -153,7 +153,7 @@ export async function deleteBlogPost(
 
     if (
       !existingPost ||
-      (existingPost.authorId !== user.id && user.role !== "admin")
+      (existingPost.authorId !== user.id && !evaluateRole(user, "admin"))
     ) {
       return { success: false, message: "Unauthorized" };
     }
@@ -171,8 +171,8 @@ export async function deleteBlogPost(
 export async function createComment(
   postId: number,
   content: string,
-  parentId?: number
-): Promise<ServerResponse<typeof blogComments.$inferSelect>> {
+  parentId?: number,
+): Promise<ServerResponse<BlogComment>> {
   try {
     const user = await getCurrentUser();
     if (!user) return { success: false, message: "Unauthorized" };
@@ -194,8 +194,8 @@ export async function createComment(
 }
 
 export async function getComments(
-  postId: number
-): Promise<ServerResponse<(typeof blogComments.$inferSelect)[]>> {
+  postId: number,
+): Promise<ServerResponse<BlogComment[]>> {
   try {
     const comments = await db.query.blogComments.findMany({
       where: eq(blogComments.postId, postId),
@@ -205,6 +205,91 @@ export async function getComments(
       },
     });
     return { success: true, data: comments };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
+// --- Categories ---
+
+export async function createCategory(
+  data: NewBlogCategory,
+): Promise<ServerResponse<BlogCategory>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !evaluateRole(user, "admin")) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    const [category] = await db
+      .insert(blogCategories)
+      .values(data)
+      .returning();
+    revalidatePath("/blog");
+    return { success: true, data: category };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
+export async function getCategories(): Promise<ServerResponse<BlogCategory[]>> {
+  try {
+    const categories = await db.query.blogCategories.findMany({
+      orderBy: [desc(blogCategories.createdAt)],
+    });
+    return { success: true, data: categories };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
+export async function updateCategory(
+  id: number,
+  data: Partial<NewBlogCategory>,
+): Promise<ServerResponse<BlogCategory>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !evaluateRole(user, "admin")) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    const [category] = await db
+      .update(blogCategories)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(blogCategories.id, id))
+      .returning();
+    revalidatePath("/blog");
+    return { success: true, data: category };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
+export async function deleteCategory(
+  id: number,
+): Promise<ServerResponse<void>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !evaluateRole(user, "admin")) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    await db.delete(blogCategories).where(eq(blogCategories.id, id));
+    revalidatePath("/blog");
+    return { success: true, data: undefined };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
+// --- Tags ---
+
+export async function getTags(): Promise<ServerResponse<BlogTag[]>> {
+  try {
+    const tags = await db.query.blogTags.findMany({
+      orderBy: [desc(blogTags.createdAt)],
+    });
+    return { success: true, data: tags };
   } catch (error) {
     return { success: false, message: (error as Error).message };
   }

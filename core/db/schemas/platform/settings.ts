@@ -63,7 +63,7 @@ export const auditLogs = pgTable("audit_logs", {
   action: text("action").notNull(),
   entityType: text("entity_type").notNull(),
   entityId: text("entity_id").notNull(),
-  details: jsonb("details"),
+  details: text("details"),
   ipAddress: text("ip_address"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
@@ -92,12 +92,15 @@ export const systemSettingsRelations = relations(systemSettings, ({ one }) => ({
   }),
 }));
 
-export const notificationPreferencesRelations = relations(notificationPreferences, ({ one }) => ({
-  user: one(user, {
-    fields: [notificationPreferences.userId],
-    references: [user.id],
+export const notificationPreferencesRelations = relations(
+  notificationPreferences,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationPreferences.userId],
+      references: [user.id],
+    }),
   }),
-}));
+);
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(user, {
@@ -125,8 +128,10 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type NewSystemSetting = typeof systemSettings.$inferInsert;
 
-export type NotificationPreference = typeof notificationPreferences.$inferSelect;
-export type NewNotificationPreference = typeof notificationPreferences.$inferInsert;
+export type NotificationPreference =
+  typeof notificationPreferences.$inferSelect;
+export type NewNotificationPreference =
+  typeof notificationPreferences.$inferInsert;
 
 export type Notification = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
@@ -136,7 +141,6 @@ export type NewAuditLog = typeof auditLogs.$inferInsert;
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
-
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(user, {
@@ -158,4 +162,3 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
     references: [user.id],
   }),
 }));
-

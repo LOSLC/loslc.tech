@@ -23,14 +23,14 @@ import { evaluateRole } from "@/lib/server/permissions";
 
 // --- System Settings ---
 
-export async function getSystemSetting(
-  key: string
-): Promise<ServerResponse<any>> {
+export async function getSystemSetting<T = unknown>(
+  key: string,
+): Promise<ServerResponse<T>> {
   try {
     const setting = await db.query.systemSettings.findFirst({
       where: eq(systemSettings.key, key),
     });
-    return { success: true, data: setting?.value };
+    return { success: true, data: setting?.value as T };
   } catch (error) {
     return { success: false, message: (error as Error).message };
   }
@@ -38,8 +38,8 @@ export async function getSystemSetting(
 
 export async function updateSystemSetting(
   key: string,
-  value: any,
-  description?: string
+  value: unknown,
+  description?: string,
 ): Promise<ServerResponse<void>> {
   try {
     const user = await getCurrentUser();
@@ -97,7 +97,7 @@ export async function getNotifications(): Promise<
 }
 
 export async function markNotificationAsRead(
-  id: number
+  id: number,
 ): Promise<ServerResponse<void>> {
   try {
     const user = await getCurrentUser();
@@ -135,7 +135,7 @@ export async function getNotificationPreferences(): Promise<
 export async function updateNotificationPreference(
   type: "email" | "push" | "in_app",
   category: string,
-  enabled: boolean
+  enabled: boolean,
 ): Promise<ServerResponse<void>> {
   try {
     const user = await getCurrentUser();
@@ -145,7 +145,7 @@ export async function updateNotificationPreference(
       where: and(
         eq(notificationPreferences.userId, user.id),
         eq(notificationPreferences.type, type),
-        eq(notificationPreferences.category, category)
+        eq(notificationPreferences.category, category),
       ),
     });
 
@@ -176,7 +176,7 @@ export async function logAuditAction(
   action: string,
   entityType: string,
   entityId: string,
-  details?: any
+  details?: string,
 ): Promise<void> {
   try {
     const user = await getCurrentUser().catch(() => null);
