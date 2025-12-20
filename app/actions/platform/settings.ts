@@ -17,7 +17,7 @@ import {
 } from "@/core/db/schemas/platform/settings";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { ServerResponse } from "@/lib/common/types/request-response";
+import type { ServerResponse } from "@/lib/common/types/request-response";
 import { getCurrentUser } from "../auth";
 import { evaluateRole } from "@/lib/server/permissions";
 
@@ -192,3 +192,21 @@ export async function logAuditAction(
     console.error("Failed to log audit action", error);
   }
 }
+
+export async function getAuditLogs(): Promise<ServerResponse<AuditLog[]>> {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !evaluateRole(user, "admin")) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    const logs = await db.query.auditLogs.findMany({
+      orderBy: [desc(auditLogs.createdAt)],
+      limit: 100,
+    });
+    return { success: true, data: logs };
+  } catch (error) {
+    return { success: false, message: (error as Error).message };
+  }
+}
+
