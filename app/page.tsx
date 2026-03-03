@@ -1,65 +1,143 @@
+import Link from "next/link";
+import { Terminal } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="min-h-screen bg-background bg-grid-pattern flex flex-col font-sans text-foreground">
+      <header className="w-full max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
+        <div className="flex items-center gap-3 w-1/4">
+          <div>
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/logo.png"
+              alt="LOSL-C Logo"
+              width={32}
+              height={32}
+              className="rounded"
             />
-            Deploy Now
-          </a>
+          </div>
+          <span className="font-bold text-xl tracking-tight">LOSL-C</span>
+        </div>
+
+        <nav className="hidden md:flex items-center justify-center gap-8 text-sm text-muted-foreground w-2/4">
+          <Link
+            href="/projects"
+            className="hover:text-secondary-foreground transition-colors"
+          >
+            Projects
+          </Link>
+          <Link
+            href="/events"
+            className="hover:text-secondary-foreground transition-colors"
+          >
+            Events
+          </Link>
+          <Link
+            href="/blog"
+            className="hover:text-secondary-foreground transition-colors"
+          >
+            Blog
+          </Link>
+          <Link
+            href="/about"
+            className="hover:text-secondary-foreground transition-colors"
+          >
+            About
+          </Link>
+        </nav>
+
+        <div className="w-1/4 flex justify-end">
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://discord.gg/KZfTn3nQtz"
             target="_blank"
             rel="noopener noreferrer"
+            className="bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center"
           >
-            Documentation
+            Join
           </a>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-20 text-center max-w-4xl mx-auto w-full">
+        {/* Hero Section */}
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-8">
+          Linux & Open Source Lovers
+          <br />
+          Community.
+        </h1>
+
+        <p className="text-muted-foreground font-mono text-sm md:text-base max-w-2xl mx-auto mb-12 leading-relaxed">
+          Empowering the next generation of builders through open
+          <br className="hidden md:block" /> collaboration.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-32">
+          <a
+            href="https://discord.gg/KZfTn3nQtz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary hover:bg-primary/80 text-primary-foreground px-8 py-3 rounded-full font-medium transition-colors w-full sm:w-auto inline-flex items-center justify-center"
+          >
+            Join the Community
+          </a>
+        </div>
+
+        <div className="w-full max-w-2xl mx-auto bg-[#111111] rounded-2xl p-10 text-left relative overflow-hidden">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3 rounded-xl">
+              <Terminal className="w-6 h-6 text-[#0066ff]" />
+            </div>
+            <h2 className="text-2xl font-bold">System Maintenance</h2>
+          </div>
+          <p className="text-gray-400 font-mono text-sm leading-relaxed mb-6">
+            &gt; Status: Offline for upgrades
+            <br />
+            &gt; Estimated completion: TBD
+            <br />
+            <br />
+            We are currently performing scheduled maintenance on our community
+            platform. Events, project directories, and member profiles will be
+            back online shortly. Thank you for your patience.
+          </p>
+          <div className="flex items-center gap-2 text-sm text-[#0066ff] font-mono">
+            <span className="animate-pulse">_</span>
+            <span>System updating...</span>
+          </div>
         </div>
       </main>
+
+      <footer className="w-full max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground border-t border-gray-800/50 mt-auto">
+        <div>
+          &copy; {new Date().getFullYear()} LOSL-C. All rights reserved.
+        </div>
+        <div className="flex items-center gap-6">
+          <a
+            href="mailto:community@loslc.tech"
+            className="hover:text-primary transition-colors"
+          >
+            community@loslc.tech
+          </a>
+          <a
+            href="https://github.com/LOSLC"
+            className="hover:text-primary transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://x.com/loslcommunity"
+            className="hover:text-primary transition-colors"
+          >
+            Twitter / X
+          </a>
+          <a
+            href="https://discord.gg/KZfTn3nQtz"
+            className="hover:text-primary transition-colors"
+          >
+            Discord
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
